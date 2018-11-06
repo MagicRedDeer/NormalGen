@@ -36,3 +36,5 @@ new_img.show()
 
 
 new_img.save(os.path.join(image_dir, image_name + '_NMAP.' + image_ext))
+
+
