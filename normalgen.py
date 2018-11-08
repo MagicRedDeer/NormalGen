@@ -16,19 +16,19 @@ def makeGray(image):
     return image
 
 
-def generateNormals(hmap, method='sobel', stength=2.5, level=7):
+def generateNormals(hmap, method='sobel', strength=2.5, level=7):
     ''' Generates Normals given a normal map'''
-    hmap = cv2.cvtColor(hmap, cv2.COLOR_BGR2GRAY)
     hmap = hmap / 255 # should we linearize
-    op = operators.diffops.get(method, operators.sobel)
+    op = operators.get_diffop(method)
 
     dy = filters.convolve(hmap, op, mode='wrap')
     dx = filters.convolve(hmap, op.transpose(), mode='wrap')
     dz = np.ones(dy.shape, dy.dtype)
-
     if math.fabs(strength < 0.01):
-        stregnth = math.copysign(0.1, strength)
-    dz *= 1.0 / strength * (1.0 + math.pow(2.0, level));
+        strength = math.copysign(0.1, strength)
+    dz_factor = 1.0 / strength * (1.0 + math.pow(2.0, level)/(2**8-1))
+    #dz *= 1.0 / strength * (1.0 + math.pow(2.0, level));
+    dz *= dz_factor
 
     normalmap = np.zeros((*hmap.shape, 3), dx.dtype)
     normalmap[:,:,0] = dz
@@ -40,7 +40,9 @@ def generateNormals(hmap, method='sobel', stength=2.5, level=7):
     normalmap[:,:,1] /= norm
     normalmap[:,:,2] /= norm
 
-    normalmap = (normalmap + 1) / 2
+    print(normalmap.max(), normalmap.min())
+
+    normalmap = (normalmap + 1) / 2 * 255
     return normalmap.astype('uint8')
 
 

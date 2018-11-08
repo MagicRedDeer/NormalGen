@@ -27,3 +27,6 @@ diffops = {
         'Prewitt'       : prewitt
 }
 
+def get_diffop(name, default=sobel):
+    return diffops.get(name, default)
+
