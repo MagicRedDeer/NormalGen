@@ -10,13 +10,20 @@ import operators
 
 
 def makeGray(image):
-    print ( image.shape )
     if len(image.shape) == 3:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     return image
 
 
-def generateNormals(hmap, method='sobel', strength=2.5, level=7):
+def normalizePerPixel(normalmap):
+    norm = np.linalg.norm(normalmap, axis=2)
+    normalmap[:,:,0] /= norm
+    normalmap[:,:,1] /= norm
+    normalmap[:,:,2] /= norm
+    return normalmap
+
+
+def generateNormals(hmap, method='sobel', strength=1, level=1):
     ''' Generates Normals given a normal map'''
     hmap = hmap / 255 # should we linearize
     op = operators.get_diffop(method)
@@ -32,21 +39,52 @@ def generateNormals(hmap, method='sobel', strength=2.5, level=7):
 
     normalmap = np.zeros((*hmap.shape, 3), dx.dtype)
     normalmap[:,:,0] = dz
-    normalmap[:,:,1] = dy
-    normalmap[:,:,2] = dx
+    normalmap[:,:,1] = -dy
+    normalmap[:,:,2] = -dx
 
     norm = np.linalg.norm(normalmap, axis=2)
     normalmap[:,:,0] /= norm
     normalmap[:,:,1] /= norm
     normalmap[:,:,2] /= norm
 
-    print(normalmap.max(), normalmap.min())
-
     normalmap = (normalmap + 1) / 2 * 255
     return normalmap.astype('uint8')
 
 
-def main(image_path=r'c:\Users\Quixel\Downloads\dice.jpg', show=True):
+def generateAmbientOcclusion(
+        hmap, nmap, size=5, height_scaling=10, scale=(1, 1), intensity=1):
+    hmap = hmap / 255 * height_scaling
+    nmap = nmap / 255
+    nmap = (nmap - 0.5)* 2
+
+    width = size * 2 + 1
+    sampler = np.zeros((width, width))
+    sampler[size, size]=-1
+
+    ao = np.zeros(hmap.shape)
+    distV = np.zeros(nmap.shape)
+
+    for y in range(-size, size+1):
+        for x in range(-size, size):
+            if x == 0 and y == 0:
+                continue
+            if math.sqrt(x*x+y*y) <= size:
+                new_sampler = sampler.copy()
+                new_sampler[y+size, x+size] = 1
+                disth = filters.convolve(hmap, new_sampler, mode='reflect')
+                distV[:,:,0]=disth
+                distV[:,:,1]=x * scale[0]
+                distV[:,:,2]=y * scale[1]
+                distV = normalizePerPixel(distV)
+                _ao = (distV * nmap).sum(axis=2) * intensity
+                ao += np.clip(_ao, 0, 1)
+
+    ao /= (width*width)
+    ao = (1-ao)
+    return (ao * 255).astype('uint8')
+
+
+def main(image_path=r'c:\Users\Quixel\Downloads\ruapehu.png', show=True):
     image_dir, image_name = os.path.split(image_path)
     image_name, image_ext = os.path.splitext(image_name)
 
@@ -54,15 +92,22 @@ def main(image_path=r'c:\Users\Quixel\Downloads\dice.jpg', show=True):
     gray = makeGray(im)
 
     normal = generateNormals(gray)
+    ao = generateAmbientOcclusion(gray, normal)
+
+    print (ao.max(), ao.min())
 
     cv2.imwrite(
             os.path.join(image_dir, image_name + '_NMAP.' + image_ext),
             normal)
+    cv2.imwrite(
+            os.path.join(image_dir, image_name + '_AO.' + image_ext),
+            ao)
 
     if show:
         cv2.imshow('Original Image', im)
         cv2.imshow('GrayScale Image', gray)
         cv2.imshow('Normal Map', normal)
+        cv2.imshow('Occlusion Map', ao)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
