@@ -1,12 +1,13 @@
 import numpy as np
 import math
 import os
+import random
 
 from scipy.ndimage import filters
 import cv2
 
 
-import operators
+from . import operators
 
 
 def makeGray(image):
@@ -51,8 +52,10 @@ def generateNormals(hmap, method='sobel', strength=1, level=1):
     return normalmap.astype('uint8')
 
 
+# look for speedups using cython or pyopencl
 def generateAmbientOcclusion(
-        hmap, nmap, size=5, height_scaling=10, scale=(1, 1), intensity=1):
+        hmap, nmap, size=20, height_scaling=10, scale=(1, 1), intensity=1,
+        max_samples = 24, seed=0):
     hmap = hmap / 255 * height_scaling
     nmap = nmap / 255
     nmap = (nmap - 0.5)* 2
@@ -60,31 +63,42 @@ def generateAmbientOcclusion(
     width = size * 2 + 1
     sampler = np.zeros((width, width))
     sampler[size, size]=-1
+    total_samples = width * width
+    sample_ratio = min(1, avg_max_samples/max_samples)
 
     ao = np.zeros(hmap.shape)
     distV = np.zeros(nmap.shape)
 
+    random.seed(seed)
+    num_samples = 0
     for y in range(-size, size+1):
         for x in range(-size, size):
             if x == 0 and y == 0:
                 continue
+            if sample_ratio < 1 and random.random() < sample_ratio:
+                continue
+
             if math.sqrt(x*x+y*y) <= size:
                 new_sampler = sampler.copy()
                 new_sampler[y+size, x+size] = 1
+
                 disth = filters.convolve(hmap, new_sampler, mode='reflect')
                 distV[:,:,0]=disth
                 distV[:,:,1]=x * scale[0]
                 distV[:,:,2]=y * scale[1]
                 distV = normalizePerPixel(distV)
+
                 _ao = (distV * nmap).sum(axis=2) * intensity
                 ao += np.clip(_ao, 0, 1)
 
-    ao /= (width*width)
+                num_samples += 1
+
+    ao /= (num_samples)
     ao = (1-ao)
     return (ao * 255).astype('uint8')
 
 
-def main(image_path=r'c:\Users\Quixel\Downloads\ruapehu.png', show=True):
+def main(image_path=r'c:\Users\Quixel\Downloads\dice.jpg', show=True):
     image_dir, image_name = os.path.split(image_path)
     image_name, image_ext = os.path.splitext(image_name)
 
