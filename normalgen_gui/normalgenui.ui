@@ -176,13 +176,32 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="value">
+               <number>25</number>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="normal_strength_spinbox"/>
+             <widget class="QDoubleSpinBox" name="normal_strength_spinbox">
+              <property name="minimum">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>2.500000000000000</double>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -209,13 +228,26 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="minimum">
+               <number>4</number>
+              </property>
+              <property name="maximum">
+               <number>10</number>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="normal_level_spinbox"/>
+             <widget class="QSpinBox" name="normal_level_spinbox">
+              <property name="minimum">
+               <number>4</number>
+              </property>
+              <property name="maximum">
+               <number>10</number>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -275,13 +307,38 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>30</number>
+              </property>
+              <property name="value">
+               <number>10</number>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="invertedAppearance">
+               <bool>false</bool>
+              </property>
+              <property name="invertedControls">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="ao_size_spinbox"/>
+             <widget class="QSpinBox" name="ao_size_spinbox">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>30</number>
+              </property>
+              <property name="value">
+               <number>10</number>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -314,13 +371,44 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="tracking">
+               <bool>true</bool>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickInterval">
+               <number>0</number>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="ao_hscale_spinbox"/>
+             <widget class="QDoubleSpinBox" name="ao_hscale_spinbox">
+              <property name="prefix">
+               <string/>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="minimum">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -353,13 +441,41 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="tracking">
+               <bool>true</bool>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickInterval">
+               <number>0</number>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="ao_xscale_spinbox"/>
+             <widget class="QDoubleSpinBox" name="ao_xscale_spinbox">
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="minimum">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -392,13 +508,41 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="tracking">
+               <bool>true</bool>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickInterval">
+               <number>0</number>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="ao_yscale_spinbox"/>
+             <widget class="QDoubleSpinBox" name="ao_yscale_spinbox">
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="minimum">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -437,7 +581,17 @@
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="ao_intensity_spinbox"/>
+             <widget class="QDoubleSpinBox" name="ao_intensity_spinbox">
+              <property name="maximum">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -470,13 +624,29 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="minimum">
+               <number>5</number>
+              </property>
+              <property name="sliderPosition">
+               <number>24</number>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="ao_samples_spinbox"/>
+             <widget class="QSpinBox" name="ao_samples_spinbox">
+              <property name="minimum">
+               <number>5</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="value">
+               <number>24</number>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
