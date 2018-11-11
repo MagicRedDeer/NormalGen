@@ -44,7 +44,7 @@ def generateNormals(hmap, method='Sobel', strength=1, level=1):
     #dz *= 1.0 / strength * (1.0 + math.pow(2.0, level));
     dz *= dz_factor
 
-    normalmap = np.zeros((*hmap.shape, 3), dx.dtype)
+    normalmap = np.zeros((hmap.shape[0], hmap.shape[1], 3), dx.dtype)
     normalmap[:, :, 0] = dz
     normalmap[:, :, 1] = -dy
     normalmap[:, :, 2] = -dx
