@@ -44,7 +44,7 @@ def generateNormals(hmap, method='Sobel', strength=1, level=1):
     #dz *= 1.0 / strength * (1.0 + math.pow(2.0, level));
     dz *= dz_factor
 
-    normalmap = np.zeros((hmap.shape[0], hmap.shape[1], 3), dx.dtype)
+    normalmap = np.zeros((*hmap.shape, 3), dx.dtype)
     normalmap[:, :, 0] = dz
     normalmap[:, :, 1] = -dy
     normalmap[:, :, 2] = -dx
@@ -74,38 +74,36 @@ def generateAmbientOcclusion(hmap,
     width = size * 2 + 1
     sampler = np.zeros((width, width))
     sampler[size, size] = -1
-    total_samples = width * width
+    total_samples = width * width - 1
     sample_ratio = min(1, max_samples / total_samples * math.pi / 2)
 
     ao = np.zeros(hmap.shape)
     distV = np.zeros(nmap.shape)
 
-    random.seed(seed)
+    samples = []
     num_samples = 0
     for y in range(-size, size + 1):
-        for x in range(-size, size):
-            if x == 0 and y == 0:
-                continue
-            if sample_ratio < 1 and random.random() < sample_ratio:
-                continue
+        for x in range(-size, size + 1):
+            if math.sqrt(x*x+y*y) <= size:
+                samples.append((y, x))
 
-            if math.sqrt(x * x + y * y) <= size:
-                new_sampler = sampler.copy()
-                new_sampler[y + size, x + size] = 1
+    random.seed(seed)
+    random.shuffle(samples)
 
-                disth = filters.convolve(hmap, new_sampler, mode='reflect')
-                distV[:, :, 0] = disth
-                distV[:, :, 1] = x * scale[0]
-                distV[:, :, 2] = y * scale[1]
-                distV = normalizePerPixel(distV)
+    for y, x in samples[:max_samples]:
+        new_sampler = sampler.copy()
+        new_sampler[y + size, x + size] = 1
 
-                _ao = (distV * nmap).sum(axis=2) * intensity
-                ao += np.clip(_ao, 0, 1)
+        disth = filters.convolve(hmap, new_sampler, mode='reflect')
+        distV[:, :, 0] = disth
+        distV[:, :, 1] = x * scale[0]
+        distV[:, :, 2] = y * scale[1]
+        distV = normalizePerPixel(distV)
 
-                num_samples += 1
+        _ao = (distV * nmap).sum(axis=2) * intensity
+        ao += np.clip(_ao, 0, 1)
 
-    print(num_samples)
-    ao /= (num_samples)
+    ao /= (min(max_samples, len(samples)))
     ao = (1 - ao)
     ao3 = np.zeros((*ao.shape, 3), dtype='uint8')
     ao = (ao * 255).astype('uint8')
