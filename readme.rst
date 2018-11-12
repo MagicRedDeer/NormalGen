@@ -11,19 +11,23 @@ Requirements:
 4. PySide2
 5. opencv-python
 
-Instructions:
+Installation Instructions:
 -------------
 
-1. Make sure python.exe for python36 or later is in path with pip
+1. Make sure python.exe for python 3.6 or later is in path and pip is installed.
+   Official binaries of python are available at
+   https://www.python.org/downloads/
 2. Clone this repo to an appropriate directory
 3. Using a command console cd to the directory
-4. Install requirement using the following commands
+4. Install requirements using the following commands *
   
-      pip install -r requirements.txt
+      python -m pip install -r requirements.txt
 
 5. No run this command to launch the program
 
       python launch.py
+
+Use of a python virtualenv is recommended. 
 
 Contact:
 --------
