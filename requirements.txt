@@ -1,0 +1,4 @@
+numpy
+opencv-python
+PySide2
+scipy
