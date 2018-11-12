@@ -1,3 +1,4 @@
-import normalgen_gui
+import sys, os
+sys.path.append(os.path.dirname(__file__))
 
-normalgen_gui.main()
+import launch
